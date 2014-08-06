@@ -1,0 +1,131 @@
+<?php
+/**
+ * @file
+ * Basic connectivity and admin config
+ * @author rkimball
+ * @package hipchat_alerts
+ * @version 0.0.1
+ */
+
+/**
+ * Implements hook_menu()
+ * @return mixed
+ */
+
+define('HC_API_VERSION',variable_get('hipchat_api_version'));
+
+if (HC_API_VERSION == 0) {
+
+	require_once('api/HipChat-v1.php');
+
+	define('HC_API_TOKEN',variable_get('hipchat_v1_api_token'));
+	define('HC_ROOM_ID',variable_get('hipchat_room_id'));
+
+} else if (HC_API_VERSION == 1) {
+
+	drupal_set_message(t('HipChat API v2 is not yet supported. : ('), 'warning');
+
+} else {
+	drupal_set_message(t('HipChat Alerts has not yet been configured.'), 'error');
+}
+
+/**
+ * Implements hook_menu()
+ * @return mixed
+ */
+function hipchat_alerts_menu() {
+
+	$items['admin/config/hipchat-alerts'] = array(
+		'description' => 'HipChat Alerts Settings',
+		'title' => 'HipChat Alerts',
+		'position' => 'left',
+		'weight' => -10,
+		'page callback' => 'system_admin_menu_block_page',
+		'access arguments' => array('administer hipchat alerts'),
+		'file' => 'system.admin.inc',
+		'file path' => drupal_get_path('module', 'system'),
+	);
+
+	$items['admin/config/hipchat-alerts/settings'] = array(
+		'description' => 'Configure API & Room settings',
+		'position' => 'left',
+		'title' => 'Settings',
+		'weight' => -50,
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('hipchat_alerts_config_form'),
+		'access arguments' => array('administer hipchat alerts'),
+		'type' => MENU_NORMAL_ITEM,
+		'file' => 'hipchat_alerts.admin.inc',
+	);
+
+	$items['admin/config/hipchat-alerts/info'] = array(
+		'description' => 'Provides a list of rooms and users for current configuration.',
+		'title' => 'Group Info',
+		'page callback' => 'hipchat_alerts_config_info',
+		'page arguments' => array(HC_API_VERSION,HC_API_TOKEN,HC_ROOM_ID),
+		'access arguments' => array('access site configuration'),
+		'type' => MENU_NORMAL_ITEM,
+		'file' => 'hipchat_alerts.admin.inc',
+	);
+
+	return $items;
+}
+
+/**
+ * Implements hook_permission().
+ * @return mixed
+ */
+function hipchat_alerts_permission() {
+	return array(
+		'administer hipchat alerts' =>  array(
+			'title' => t('Access HipChat Alerts admin'),
+			'description' => t('Change API keys and alert settings for HipChat'),
+		),
+	);
+}
+
+
+/**
+ * Implements messaging handler
+ * @param $room
+ * @param $sender
+ * @param $message
+ * @return bool Sends a message to the HipChat room defined in config
+ */
+function hipchat_message(&$sender,&$message,$room = HC_ROOM_ID) {
+
+	$token = variable_get('hipchat_v1_api_token');
+	$target = 'https://api.hipchat.com';
+	$hc = new HipChat\HipChat($token, $target);
+
+	if(strlen($sender) >= 15) {
+		// HC only allows author names to be 15 characters, so if our message
+		// exceeds that, we'll add the sender's name to the message instead
+		$msg = $message;
+		$message = $sender . ": " . $msg;
+		$sender = substr($sender,0,15);
+	}
+
+	if(variable_get('site_environment') != 1) {
+		$hc->message_room($room, $sender, $message);
+		return true;
+	} else {
+		return false;
+	}
+
+}
+
+/**
+ * Sends alert if all caches are cleared
+ * @params
+ */
+function hipchat_alerts_cache() {
+	$message = "Testing hipchat message function.";
+	$sender = variable_get('site_name','Drupal');
+
+	if(hipchat_message($sender, $message)) {
+		drupal_set_message('Message: <em>"'.$message.'"</em> sent successfully!','status');
+	} else {
+		drupal_set_message('There was a problem; message not sent.','error');
+	}
+}

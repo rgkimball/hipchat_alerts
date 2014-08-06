@@ -1,0 +1,7 @@
+name = HipChat Alerts
+description = Sends alerts to HipChat room(s) if certain administrative actions are taken
+core = 7.x
+package = e3
+configure = admin/config/system/hipchat
+files[] = hipchat.module
+
