@@ -12,19 +12,15 @@
  * @return mixed
  */
 
-define('HC_API_VERSION',variable_get('hipchat_api_version'));
+//define('HC_API_VERSION',variable_get('hipchat_api_version'));
+define('HC_API_VERSION',0);
+define('HC_API_TOKEN',variable_get('hipchat_v1_api_token', '8f5c0ac8672bb5ebbaca8c1aa0a65e'));
+define('HC_ROOM_ID',variable_get('hipchat_room_id', '739507'));
 
 if (HC_API_VERSION == 0) {
-
-	require_once('api/HipChat-v1.php');
-
-	define('HC_API_TOKEN',variable_get('hipchat_v1_api_token'));
-	define('HC_ROOM_ID',variable_get('hipchat_room_id'));
-
+	//require_once('api/HipChat-v1.php');
 } else if (HC_API_VERSION == 1) {
-
 	drupal_set_message(t('HipChat API v2 is not yet supported. : ('), 'warning');
-
 } else {
 	drupal_set_message(t('HipChat Alerts has not yet been configured.'), 'error');
 }
@@ -76,6 +72,41 @@ function hipchat_alerts_permission() {
 	);
 }
 
+function hipchat_alerts_libraries_info() {
+  $library['hipchat-php'] = array(
+    'name' => 'hipchat-php',
+    'vendor url' => 'https://github.com/hipchat/hipchat-php',
+    'download url' => 'https://github.com/hipchat/hipchat-php',
+    'path' => 'src/HipChat', 
+    'version callback' => 'hipchat_alerts_version_callback',
+    'files' => array(
+      'php' => array(
+        'HipChat.php',
+      ),
+    ),
+  );
+
+  return $library;
+}
+
+function hipchat_alerts_version_callback() {
+  return TRUE;
+}
+
+function hipchat_alerts_test_messaging($form, $form_state) { $message = "Testing hipchat message function."; $sender = variable_get('site_name','Drupal');
+
+  if(hipchat_message($sender, $message)) {
+    drupal_set_message('Message: <em>"'.$message.'"</em> sent successfully!','status');
+  } else {
+    drupal_set_message('There was a problem; message not sent.','error');
+  }
+
+  $commands = array();
+
+  $commands[] = ajax_command_prepend('div#hipchat-test-markup', theme('status_messages'));
+
+  return array('#type' => 'ajax', '#commands' => $commands);
+}
 
 /**
  * Implements messaging handler
@@ -85,6 +116,8 @@ function hipchat_alerts_permission() {
  * @return bool Sends a message to the HipChat room defined in config
  */
 function hipchat_message(&$sender,&$message,$room = HC_ROOM_ID) {
+
+  $library = libraries_load('hipchat-php');
 
 	$token = variable_get('hipchat_v1_api_token');
 	$target = 'https://api.hipchat.com';
@@ -104,7 +137,6 @@ function hipchat_message(&$sender,&$message,$room = HC_ROOM_ID) {
 	} else {
 		return false;
 	}
-
 }
 
 /**
