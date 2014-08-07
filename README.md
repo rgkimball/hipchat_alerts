@@ -1,8 +1,12 @@
 #HipChat Alerts Module
-***
+**
 
 ##Overview
 This module uses [HipChat API v1](https://www.hipchat.com/docs/api) to provide a site status alert system for our production installs. Inspired by the ChatOps movement.
+
+##Requirements
+Libraries 2.x
+[hipchat-php](https://github.com/hipchat/hipchat-php)
 
 ##Features
 
