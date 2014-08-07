@@ -75,6 +75,9 @@ function hipchat_alerts_permission() {
 	);
 }
 
+/**
+ * Implements hook_libraries_info().
+ */
 function hipchat_alerts_libraries_info() {
   $library['hipchat-php'] = array(
     'name' => 'hipchat-php',
@@ -92,10 +95,19 @@ function hipchat_alerts_libraries_info() {
   return $library;
 }
 
+/**
+ * Implements version callback for hook_libraries_info()
+ *
+ * Since hipchat-api doesn't have a version number specified in any files we
+ * have to hijack the callback and just provide TRUE.
+ */
 function hipchat_alerts_version_callback() {
   return TRUE;
 }
 
+/**
+ * Implements ajax form callback funtion that can be used for testing.
+ */
 function hipchat_alerts_test_messaging($form, $form_state) { $message = "Testing hipchat message function."; $sender = variable_get('site_name','Drupal');
 
   if(hipchat_message($sender, $message)) {
