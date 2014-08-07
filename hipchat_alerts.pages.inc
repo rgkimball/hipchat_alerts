@@ -1,9 +1,10 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: mlander
- * Date: 2/4/14
- * Time: 6:20 PM
+ * @file
+ * Pages
+ * @author rkimball
+ * @package hipchat_alerts
+ * @version 0.0.1
  */
 
 // Nothing here yet

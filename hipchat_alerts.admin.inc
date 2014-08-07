@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Basic connectivity and admin config
+ * Admin config pages
  * @author rkimball
  * @package hipchat_alerts
  * @version 0.0.1
@@ -125,50 +125,34 @@ function hipchat_alerts_config_info($apivers,$token,$room) {
 	}
 
 	$content = '';
+	$form = array();
 
 	if(!is_null($apivers)) {
 
-		$rows = array();
+		$content .= '<h2>Group Users</h2>';
+		$content .= hipchat_users();
 
-//		// get rooms
-//		$content .= "<br />Rooms:<br />";
-//		try {
-//			$rooms = $hc->get_rooms();
-//			foreach ($rooms as $room) {
-//				$content .= "Room $room->room_id<br />";
-//				$content .= " - Name: $room->name<br />";
-//				$room_data = $hc->get_room($room->room_id);
-//				$content .= " - Participants: ".count($room_data->participants)."<br />";
-//			}
-//		} catch (HipChat\hipchat_alerts_Exception $e) {
-//			$content .= "Oops! Error: ".$e->getMessage();
-//		}
-//
-//		// get users
-//		$content .= "<br />Users:<br />";
-//		try {
-//			$users = $hc->get_users();
-//			foreach ($users as $user) {
-//				$content .= "User $user->user_id<br />";
-//				$content .= " - Name: $user->name<br />";
-//				$content .= " - Email: $user->email<br />";
-//				$user_data = $hc->get_user($user->user_id);
-//				$content .= " - Status: ".$user_data->status."<br />";
-//			}
-//		} catch (HipChat\hipchat_alerts_Exception $e) {
-//			$content .= "Oops! Error: ".$e->getMessage();
-//		}
+		// test message
+		$sender = 'HC-Alert';
+		$msg = 'HipChat Alert System Test';
 
-		// test posting
-		$sender = 'Test';
-		$msg = 'Testing site environment blocker.';
+		$form['hipchat_test'] = array(
+			'#type' => 'button',
+			'#name' => 'Send a Test',
+			'#value' => t('Send a Test'),
+//			'#ajax' => array(
+//				'callback' => hipchat_message($sender,$msg),
+//				'wrapper' => 'test-wrapper',
+//				'effect' => 'fade',
+//			),
+		);
 
-		hipchat_message($sender, $msg);
+//		hipchat_message($sender, $msg);
 
 	} else {
 		drupal_set_message(t('HipChat Alerts has not yet been configured. Please provide your API Key.'), 'error');
 	}
 
 	return $content;
-
+	return system_settings_form($form);
 }
