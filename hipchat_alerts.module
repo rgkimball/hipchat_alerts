@@ -18,11 +18,13 @@ define('HC_API_TOKEN', variable_get('hipchat_v1_api_token', '8f5c0ac8672bb5ebbac
 define('HC_ROOM_ID', variable_get('hipchat_room_id', '739507'));
 define('HC_API_ENDPOINT', 'https://api.hipchat.com');
 
-if (HC_API_VERSION == 0) {
-	//require_once('api/HipChat-v1.php');
-} else if (HC_API_VERSION == 1) {
+switch (HC_API_VERSION) {
+case 0:
+  break;
+case 1:
 	drupal_set_message(t('HipChat API v2 is not yet supported. : ('), 'warning');
-} else {
+  break;
+default:
 	drupal_set_message(t('HipChat Alerts has not yet been configured.'), 'error');
 }
 
