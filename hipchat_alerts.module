@@ -35,36 +35,28 @@ if (HC_API_VERSION == 0) {
  */
 function hipchat_alerts_menu() {
 
-	$items['admin/config/hipchat-alerts'] = array(
-		'description' => 'HipChat Alerts Settings',
+	$items['admin/config/development/hipchat-alerts'] = array(
 		'title' => 'HipChat Alerts',
-		'position' => 'left',
-		'weight' => -10,
-		'page callback' => 'system_admin_menu_block_page',
-		'access arguments' => array('administer hipchat alerts'),
-		'file' => 'system.admin.inc',
-		'file path' => drupal_get_path('module', 'system'),
-	);
-
-	$items['admin/config/hipchat-alerts/settings'] = array(
-		'description' => 'Configure API & Room settings',
-		'position' => 'left',
-		'title' => 'Settings',
-		'weight' => -50,
+		'description' => t('HipChat Alerts Settings'),
 		'page callback' => 'drupal_get_form',
 		'page arguments' => array('hipchat_alerts_config_form'),
 		'access arguments' => array('administer hipchat alerts'),
-		'type' => MENU_NORMAL_ITEM,
 		'file' => 'hipchat_alerts.admin.inc',
+  );
+
+	$items['admin/config/development/hipchat-alerts/settings'] = array(
+		'title' => t('Settings'),
+		'description' => t('Configure API & Room settings'),
+		'type' => MENU_DEFAULT_LOCAL_TASK,
 	);
 
-	$items['admin/config/hipchat-alerts/info'] = array(
-		'description' => 'Provides a list of rooms and users for current configuration.',
-		'title' => 'Group Info',
+	$items['admin/config/development/hipchat-alerts/info'] = array(
+		'title' => t('Group Info'),
+		'description' => t('Provides a list of rooms and users for current configuration.'),
 		'page callback' => 'hipchat_alerts_config_info',
 		'page arguments' => array(HC_API_VERSION,HC_API_TOKEN,HC_ROOM_ID),
 		'access arguments' => array('access site configuration'),
-		'type' => MENU_NORMAL_ITEM,
+		'type' => MENU_LOCAL_TASK,
 		'file' => 'hipchat_alerts.admin.inc',
 	);
 
