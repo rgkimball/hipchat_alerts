@@ -13,9 +13,10 @@
  */
 
 //define('HC_API_VERSION',variable_get('hipchat_api_version'));
-define('HC_API_VERSION',0);
-define('HC_API_TOKEN',variable_get('hipchat_v1_api_token', '8f5c0ac8672bb5ebbaca8c1aa0a65e'));
-define('HC_ROOM_ID',variable_get('hipchat_room_id', '739507'));
+define('HC_API_VERSION', 0);
+define('HC_API_TOKEN', variable_get('hipchat_v1_api_token', '8f5c0ac8672bb5ebbaca8c1aa0a65e'));
+define('HC_ROOM_ID', variable_get('hipchat_room_id', '739507'));
+define('HC_API_ENDPOINT', 'https://api.hipchat.com');
 
 if (HC_API_VERSION == 0) {
 	//require_once('api/HipChat-v1.php');
@@ -116,27 +117,26 @@ function hipchat_alerts_test_messaging($form, $form_state) { $message = "Testing
  * @return bool Sends a message to the HipChat room defined in config
  */
 function hipchat_message(&$sender,&$message,$room = HC_ROOM_ID) {
+  if ($library = libraries_load('hipchat-php') && $library['loaded']) {
+    $token = variable_get('hipchat_v1_api_token');
+    $target = HC_API_ENDPOINT;
+    $hc = new HipChat\HipChat($token, $target);
 
-  $library = libraries_load('hipchat-php');
+    if(strlen($sender) >= 15) {
+      // HC only allows author names to be 15 characters, so if our message
+      // exceeds that, we'll add the sender's name to the message instead
+      $msg = $message;
+      $message = $sender . ": " . $msg;
+      $sender = substr($sender,0,15);
+    }
 
-	$token = variable_get('hipchat_v1_api_token');
-	$target = 'https://api.hipchat.com';
-	$hc = new HipChat\HipChat($token, $target);
-
-	if(strlen($sender) >= 15) {
-		// HC only allows author names to be 15 characters, so if our message
-		// exceeds that, we'll add the sender's name to the message instead
-		$msg = $message;
-		$message = $sender . ": " . $msg;
-		$sender = substr($sender,0,15);
-	}
-
-	if(variable_get('site_environment') != 1) {
-		$hc->message_room($room, $sender, $message);
-		return true;
-	} else {
-		return false;
-	}
+    if(variable_get('site_environment') != 1) {
+      $hc->message_room($room, $sender, $message);
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
 
 /**
@@ -145,42 +145,44 @@ function hipchat_message(&$sender,&$message,$room = HC_ROOM_ID) {
  * @return mixed
  */
 function hipchat_users($room = HC_ROOM_ID) {
-	$token = variable_get('hipchat_v1_api_token');
-	$target = 'https://api.hipchat.com';
-	$hc = new HipChat\HipChat($token, $target);
+  if ($library = libraries_load('hipchat-php') && $library['loaded']) {
+    $token = variable_get('hipchat_v1_api_token');
+    $target = HC_API_ENDPOINT;
+    $hc = new HipChat\HipChat($token, $target);
 
-	$content = '';
-	$rows = array();
+    $content = '';
+    $rows = array();
 
-	try {
-		$users = $hc->get_users();
-		$header = array('','User ID','Username','Email','Status','Last Active','Timezone');
+    try {
+      $users = $hc->get_users();
+      $header = array('','User ID','Username','Email','Status','Last Active','Timezone');
 
-		foreach ($users as $user) {
-			$photo = '<img src="'.$user->photo_url.'" height="125" width="125" alt="'.$user->name.'" />';
+      foreach ($users as $user) {
+        $photo = '<img src="'.$user->photo_url.'" height="125" width="125" alt="'.$user->name.'" />';
 
-			if(date('Y',time()) == date('Y',$user->last_active)) {
-				$last_active = date('F j, g:i:s',$user->last_active);
-			} else {
-				$last_active = date('F j, Y, g:i:s',$user->last_active);
-			}
+        if(date('Y',time()) == date('Y',$user->last_active)) {
+          $last_active = date('F j, g:i:s',$user->last_active);
+        } else {
+          $last_active = date('F j, Y, g:i:s',$user->last_active);
+        }
 
-			if($user->is_group_admin == 1) {
-				$username = '@<strong>'.$user->mention_name.'</strong><br />'.$user->title;
-			} else {
-				$username = '@'.$user->mention_name.'<br />'.$user->title;
-			}
+        if($user->is_group_admin == 1) {
+          $username = '@<strong>'.$user->mention_name.'</strong><br />'.$user->title;
+        } else {
+          $username = '@'.$user->mention_name.'<br />'.$user->title;
+        }
 
-			$rows[] = array($photo,$user->user_id,$username,$user->email,$user->status,$last_active,$user->timezone);
+        $rows[] = array($photo,$user->user_id,$username,$user->email,$user->status,$last_active,$user->timezone);
 
-	  }
-	} catch (HipChat\hipchat_alerts_Exception $e) {
-		$content .= "Oops! Error: ".$e->getMessage();
-	}
+      }
+    } catch (HipChat\hipchat_alerts_Exception $e) {
+      $content .= "Oops! Error: ".$e->getMessage();
+    }
 
-	$output = theme('table', array('header' => $header, 'rows' => $rows));
+    $output = theme('table', array('header' => $header, 'rows' => $rows));
 
-	return $output;
+    return $output;
+  }
 }
 
 
