@@ -141,13 +141,13 @@ function hipchat_alerts_config_info($apivers,$token,$room) {
 			'#name' => 'Send a Test',
 			'#value' => t('Send a Test'),
 //			'#ajax' => array(
-//				'callback' => hipchat_message($sender,$msg),
+//				'callback' => hipchat_alerts_message($sender,$msg),
 //				'wrapper' => 'test-wrapper',
 //				'effect' => 'fade',
 //			),
 		);
 
-//		hipchat_message($sender, $msg);
+//		hipchat_alerts_message($sender, $msg);
 
 	} else {
 		drupal_set_message(t('HipChat Alerts has not yet been configured. Please provide your API Key.'), 'error');
@@ -155,4 +155,48 @@ function hipchat_alerts_config_info($apivers,$token,$room) {
 
 	return $content;
 	return system_settings_form($form);
+}
+
+function hipchat_alerts_config_sandbox_form($form, &$form_state) {
+  $form['test_result'] = array(
+    '#type' => 'markup',
+    '#markup' => '<div id="test-result"></div>',
+  );
+
+	$form['send_content'] = array(
+		'#type' => 'textarea',
+	);
+
+	$form['send_test'] = array(
+		'#type' => 'submit',
+		'#value' => t('Send Test'),
+    '#submit' => array('hipchat_alerts_config_sandbox_form_submit'),
+		'#ajax' => array(
+			'callback' => 'hipchat_alerts_config_sandbox_form_callback',
+			'wrapper' => 'test-result',
+      'method' => 'replace',
+			'effect' => 'fade',
+		),
+	);
+
+	return $form;
+}
+
+function hipchat_alerts_config_sandbox_form_submit($form, &$form_state) {
+  $message = $form_state['values']['send_content'];
+  _hipchat_alerts_config_sandbox_test($message);
+  return $form;
+}
+
+function hipchat_alerts_config_sandbox_form_callback($form, &$form_state) {
+  return $form['test_result']['#markup'];
+}
+
+function _hipchat_alerts_config_sandbox_test($message) {
+  $success = hipchat_alerts_message($message);
+
+  $message = ($success) ? 'Success' : 'Message was unable to send';
+  $status = ($success) ? 'status' : 'error';
+
+  drupal_set_message($message, $status);
 }
