@@ -19,13 +19,13 @@ define('HC_ROOM_ID', variable_get('hipchat_room_id', '739507'));
 define('HC_API_ENDPOINT', 'https://api.hipchat.com');
 
 switch (HC_API_VERSION) {
-case 0:
-  break;
-case 1:
-	drupal_set_message(t('HipChat API v2 is not yet supported. : ('), 'warning');
-  break;
-default:
-	drupal_set_message(t('HipChat Alerts has not yet been configured.'), 'error');
+  case 0:
+    break;
+  case 1:
+    drupal_set_message(t('HipChat API v2 is not yet supported. : ('), 'warning');
+    break;
+  default:
+    drupal_set_message(t('HipChat Alerts has not yet been configured.'), 'error');
 }
 
 /**
@@ -34,42 +34,42 @@ default:
  */
 function hipchat_alerts_menu() {
 
-	$items['admin/config/development/hipchat-alerts'] = array(
-		'title' => 'HipChat Alerts',
-		'description' => t('HipChat Alerts Settings'),
-		'page callback' => 'drupal_get_form',
-		'page arguments' => array('hipchat_alerts_config_form'),
-		'access arguments' => array('administer hipchat alerts'),
-		'file' => 'hipchat_alerts.admin.inc',
+  $items['admin/config/development/hipchat-alerts'] = array(
+    'title' => 'HipChat Alerts',
+    'description' => t('HipChat Alerts Settings'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('hipchat_alerts_config_form'),
+    'access arguments' => array('administer hipchat alerts'),
+    'file' => 'hipchat_alerts.admin.inc',
   );
 
-	$items['admin/config/development/hipchat-alerts/settings'] = array(
-		'title' => t('Settings'),
-		'description' => t('Configure API & Room settings'),
-		'type' => MENU_DEFAULT_LOCAL_TASK,
-	);
+  $items['admin/config/development/hipchat-alerts/settings'] = array(
+    'title' => t('Settings'),
+    'description' => t('Configure API & Room settings'),
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+  );
 
-	$items['admin/config/development/hipchat-alerts/info'] = array(
-		'title' => t('Group Info'),
-		'description' => t('Provides a list of rooms and users for current configuration.'),
-		'page callback' => 'hipchat_alerts_config_info',
-		'page arguments' => array(HC_API_VERSION,HC_API_TOKEN,HC_ROOM_ID),
-		'access arguments' => array('access site configuration'),
-		'type' => MENU_LOCAL_TASK,
-		'file' => 'hipchat_alerts.admin.inc',
-	);
+  $items['admin/config/development/hipchat-alerts/info'] = array(
+    'title' => t('Group Info'),
+    'description' => t('Provides a list of rooms and users for current configuration.'),
+    'page callback' => 'hipchat_alerts_config_info',
+    'page arguments' => array(HC_API_VERSION,HC_API_TOKEN,HC_ROOM_ID),
+    'access arguments' => array('access site configuration'),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'hipchat_alerts.admin.inc',
+  );
 
-	$items['admin/config/development/hipchat-alerts/sandbox'] = array(
-		'title' => t('Sandbox'),
-		'description' => t('Sandbox page for testing messages'),
+  $items['admin/config/development/hipchat-alerts/sandbox'] = array(
+    'title' => t('Sandbox'),
+    'description' => t('Sandbox page for testing messages'),
     'page callback' => 'drupal_get_form',
-		'page arguments' => array('hipchat_alerts_config_sandbox_form'),
-		'access arguments' => array('access site configuration'),
-		'type' => MENU_LOCAL_TASK,
-		'file' => 'hipchat_alerts.admin.inc',
-	);
+    'page arguments' => array('hipchat_alerts_config_sandbox_form'),
+    'access arguments' => array('access site configuration'),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'hipchat_alerts.admin.inc',
+  );
 
-	return $items;
+  return $items;
 }
 
 /**
@@ -77,12 +77,12 @@ function hipchat_alerts_menu() {
  * @return mixed
  */
 function hipchat_alerts_permission() {
-	return array(
-		'administer hipchat alerts' =>  array(
-			'title' => t('Access HipChat Alerts admin'),
-			'description' => t('Change API keys and alert settings for HipChat'),
-		),
-	);
+  return array(
+    'administer hipchat alerts' =>  array(
+      'title' => t('Access HipChat Alerts admin'),
+      'description' => t('Change API keys and alert settings for HipChat'),
+    ),
+  );
 }
 
 /**
@@ -93,7 +93,7 @@ function hipchat_alerts_libraries_info() {
     'name' => 'hipchat-php',
     'vendor url' => 'https://github.com/hipchat/hipchat-php',
     'download url' => 'https://github.com/hipchat/hipchat-php',
-    'path' => 'src/HipChat', 
+    'path' => 'src/HipChat',
     'version callback' => 'hipchat_alerts_version_callback',
     'files' => array(
       'php' => array(
@@ -225,12 +225,12 @@ function hipchat_users($room = HC_ROOM_ID) {
  * @params
  */
 function hipchat_alerts_cache() {
-	$message = "Testing hipchat message function.";
-	$sender = variable_get('site_name','Drupal');
+  $message = "Testing hipchat message function.";
+  $sender = variable_get('site_name','Drupal');
 
-	if(hipchat_alerts_message($sender, $message)) {
-		drupal_set_message('Message: <em>"'.$message.'"</em> sent successfully!','status');
-	} else {
-		drupal_set_message('There was a problem; message not sent.','error');
-	}
+  if(hipchat_alerts_message($sender, $message)) {
+    drupal_set_message('Message: <em>"'.$message.'"</em> sent successfully!','status');
+  } else {
+    drupal_set_message('There was a problem; message not sent.','error');
+  }
 }
