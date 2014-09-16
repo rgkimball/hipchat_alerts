@@ -7,4 +7,4 @@ files[] = hipchat.module
 
 dependencies[] = libraries
 
-files[] = hipchat.module
+files[] = hipchat_alerts.module
