@@ -130,7 +130,7 @@ function hipchat_alerts_config_info($apivers,$token,$room) {
   if(!is_null($apivers)) {
 
     $content .= '<h2>Group Users</h2>';
-    $content .= hipchat_users();
+    $content .= hipchat_users_table();
 
     // test message
     $sender = 'HC-Alert';
