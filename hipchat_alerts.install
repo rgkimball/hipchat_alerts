@@ -14,8 +14,6 @@
  * @return mixed
  */
 function hipchat_alerts_install() {
-
-  // Make sure we're calling hook_libraries_info for hipchat-php
   cache_clear_all();
 }
 

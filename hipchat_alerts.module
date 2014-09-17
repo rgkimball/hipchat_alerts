@@ -108,12 +108,12 @@ function hipchat_alerts_libraries_info() {
 /**
  * Implements hook_watchdog().
  *
- * Evaluates ever watchdog log message and routes a message to hipchat if necessary.
+ * Evaluates every watchdog log message and routes a message to hipchat if necessary.
  *
  * @param array $log_entry
  */
 function hipchat_alerts_watchdog($log_entry) {
-  hipchat_alerts_message(t($log_entry['message'], $log_entry['variables']), $GLOBALS['base_url']);
+  hipchat_alerts_message(t($log_entry['message'].', '.$log_entry['variables'].', '.$GLOBALS['base_url']));
 }
 
 /**
@@ -233,7 +233,7 @@ function hipchat_users($room = HC_ROOM_ID) {
 
     return $output;
   } else {
-    drupal_set_message('Hipchat PHP Library could not be loaded.','error');
+    watchdog('hipchat-alerts', 'An error loading the hipchat-php library occured.', array(), WATCHDOG_ERROR);
   }
 }
 
