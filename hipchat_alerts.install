@@ -48,13 +48,22 @@ function hipchat_alerts_requirements($phase){
 //      default:
 //        drupal_set_message(t('HipChat Alerts has not yet been configured.'), 'error');
 //    }
-    if($library = libraries_load('hipchat-php') && !$library['loaded']){
+
+    $library = libraries_load('hipchat-php');
+    if(!$library['loaded']){
       $requirements['hipchat-php'] = array(
         'title' => t('HipChat Alerts'),
-        'description' => t('hipchat-php library not found'),
+        'value' => t('HipChat PHP v1 library not found.'),
         'severity' => REQUIREMENT_ERROR,
       );
+    } else {
+      $requirements['hipchat-php'] = array(
+        'title' => t('HipChat Alerts'),
+        'value' => t('HipChat PHP v1 library installed at <i>@path</i>', array('@path' => libraries_get_path('hipchat-php').'/src/HipChat/HipChat.php')),
+        'severity' => REQUIREMENT_OK,
+      );;
     }
   }
 
+  return $requirements;
 }
