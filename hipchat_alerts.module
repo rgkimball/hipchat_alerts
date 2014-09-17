@@ -7,20 +7,19 @@
  * @version 1.0.0
  */
 
-define('HC_API_VERSION', 0); // Eventually this will change based on which version of the API you're using
-define('HC_API_TOKEN', variable_get('hipchat_v1_api_token', ''));
-define('HC_ROOM_ID', variable_get('hipchat_room_id', ''));
+// Eventually this will change based on which version of the API you're using
+define('HC_API_VERSION', 0);
 define('HC_API_ENDPOINT', 'https://api.hipchat.com');
 
 /**
  * Implements hook_menu()
- * @return mixed
+ * @return mixed Returns menu items for admin interface
  */
 function hipchat_alerts_menu() {
 
   $items['admin/config/development/hipchat-alerts'] = array(
     'title' => 'HipChat Alerts',
-    'description' => t('HipChat Alerts Settings'),
+    'description' => 'HipChat Alerts Settings',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('hipchat_alerts_config_form'),
     'access arguments' => array('administer hipchat alerts'),
@@ -28,24 +27,26 @@ function hipchat_alerts_menu() {
   );
 
   $items['admin/config/development/hipchat-alerts/settings'] = array(
-    'title' => t('Settings'),
-    'description' => t('Configure API & Room settings'),
+    'title' => 'Settings',
+    'description' => 'Configure API & Room settings',
     'type' => MENU_DEFAULT_LOCAL_TASK,
   );
 
   $items['admin/config/development/hipchat-alerts/info'] = array(
-    'title' => t('Group Info'),
-    'description' => t('Provides a list of rooms and users for current configuration.'),
+    'title' => 'Group Info',
+    'description' => 'Provides a list of rooms and users for current configuration.',
     'page callback' => 'hipchat_alerts_config_info',
-    'page arguments' => array(HC_API_VERSION,HC_API_TOKEN,HC_ROOM_ID),
+    'page arguments' => array(HC_API_VERSION,
+      variable_get('hipchat_v1_api_token', ''),
+      variable_get('hipchat_room_id', '')),
     'access arguments' => array('administer hipchat alerts'),
     'type' => MENU_LOCAL_TASK,
     'file' => 'hipchat_alerts.admin.inc',
   );
 
   $items['admin/config/development/hipchat-alerts/sandbox'] = array(
-    'title' => t('Sandbox'),
-    'description' => t('Sandbox page for testing messages'),
+    'title' => 'Sandbox',
+    'description' => 'Sandbox page for testing messages',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('hipchat_alerts_config_sandbox_form'),
     'access arguments' => array('administer hipchat alerts'),
@@ -58,7 +59,7 @@ function hipchat_alerts_menu() {
 
 /**
  * Implements hook_permission().
- * @return mixed
+ * @return mixed Module admin access
  */
 function hipchat_alerts_permission() {
   return array(
@@ -97,12 +98,13 @@ function hipchat_alerts_libraries_info() {
 function hipchat_alerts_watchdog($log_entry) {
   $minimum = variable_get('hipchat_watchdog_severity', WATCHDOG_ERROR);
 
-  if($minimum != null && $log_entry['severity'] <= $minimum) {
+  if ($minimum != NULL && $log_entry['severity'] <= $minimum) {
     // Can't pass null as second variable of t()
-    (isset($log_entry['variables'])) ? $vars = $log_entry['variables'] : $vars = array();
+    (isset($log_entry['variables'])) ?
+      $vars = $log_entry['variables'] : $vars = array();
 
     // Convert severity to human speak
-    switch($log_entry['severity']){
+    switch ($log_entry['severity']) {
       case 0:
         $severity = ' (emergency)';
         break;
@@ -131,7 +133,8 @@ function hipchat_alerts_watchdog($log_entry) {
         $severity = '';
     }
 
-    hipchat_alerts_message(t($log_entry['type'].$severity.' : '.$log_entry['message'], $vars), variable_get('site_name', 'Drupal'));
+    hipchat_alerts_message(t($log_entry['type'] . $severity . ' : ' .
+      $log_entry['message'], $vars), variable_get('site_name', 'Drupal'));
   }
 
 }
@@ -147,31 +150,14 @@ function hipchat_alerts_version_callback() {
 }
 
 /**
- * Implements ajax form callback function that can be used for testing.
- */
-function hipchat_alerts_test_messaging($form, $form_state) { $message = "Testing hipchat message function."; $sender = variable_get('site_name','Drupal');
-
-  if(hipchat_alerts_message($sender, $message)) {
-    drupal_set_message('Message: <em>"'.$message.'"</em> sent successfully!','status');
-  } else {
-    drupal_set_message('There was a problem; message not sent.','error');
-  }
-
-  $commands = array();
-
-  $commands[] = ajax_command_prepend('div#hipchat-test-markup', theme('status_messages'));
-
-  return array('#type' => 'ajax', '#commands' => $commands);
-}
-
-/**
  * Implements messaging handler
  * @param $room
  * @param $sender
  * @param $message
  * @return bool Sends a message to the HipChat room defined in config
  */
-function hipchat_alerts_message($message, $sender = 'Drupal', $room = HC_ROOM_ID) {
+function hipchat_alerts_message($message, $sender = 'Drupal') {
+  $room = variable_get('hipchat_room_id', '');
   $success = FALSE;
 
   if (($library = libraries_load('hipchat-php')) && $library['loaded']) {
@@ -179,29 +165,33 @@ function hipchat_alerts_message($message, $sender = 'Drupal', $room = HC_ROOM_ID
     $target = HC_API_ENDPOINT;
     $hc = new HipChat\HipChat($token, $target);
 
-    if(strlen($sender) >= 15) {
+    if (strlen($sender) >= 15) {
       // HC only allows author names to be 15 characters, so if our message
       // exceeds that, we'll add the sender's name to the message instead
       // In most cases, this is either 'Drupal' or site_name
       $msg = $message;
       $message = $sender . ": " . $msg;
-      $sender = substr($sender,0,15);
+      $sender = substr($sender, 0, 15);
     }
 
-    if(variable_get('site_environment') != 1) {
+    if (variable_get('site_environment') != 1) {
       try {
         $hc->message_room($room, $sender, $message);
         $success = TRUE;
       }
       catch (Exception $e) {
-        $message = "Error sending HipChat message: " . $e->getMessage() . "\n";
-        drupal_set_message($message);
-        watchdog('hipchat_alerts', $message, $variables = array(), WATCHDOG_ERROR);
+        drupal_set_message(t('Error sending HipChat message: @message'),
+          array('@message' => $e->getMessage()));
+        watchdog('hipchat_alerts', $message,
+          $variables = array(), WATCHDOG_ERROR);
         $success = FALSE;
       }
     }
-  } else {
-    watchdog('hipchat-alerts', 'An error loading the hipchat-php library occurred.', array(), WATCHDOG_ERROR);
+  }
+  else {
+    watchdog('hipchat-alerts',
+      'An error loading the hipchat-php library occurred.',
+      array(), WATCHDOG_ERROR);
   }
 
   return $success;
@@ -212,11 +202,9 @@ function hipchat_alerts_message($message, $sender = 'Drupal', $room = HC_ROOM_ID
  * @param $room
  * @return mixed
  */
-function hipchat_users_table($room = HC_ROOM_ID) {
+function hipchat_users_table($room) {
 
-  $library = libraries_load('hipchat-php');
-
-  if ($library['loaded']) {
+  if (($library = libraries_load('hipchat-php')) && $library['loaded']) {
     $token = variable_get('hipchat_v1_api_token');
     $target = HC_API_ENDPOINT;
     $hc = new HipChat\HipChat($token, $target);
@@ -226,35 +214,44 @@ function hipchat_users_table($room = HC_ROOM_ID) {
 
     try {
       $users = $hc->get_users();
-      $header = array('','User ID','Username','Email','Status','Last Active','Timezone');
+      $header = array('', 'User ID', 'Username', 'Email',
+        'Status', 'Last Active', 'Timezone');
 
       foreach ($users as $user) {
-        $photo = '<img src="'.$user->photo_url.'" height="125" width="125" alt="'.$user->name.'" />';
+        $photo = '<img src="' . $user->photo_url .
+          '" height="125" width="125" alt="' . $user->name . '" />';
 
-        if(date('Y',time()) == date('Y',$user->last_active)) {
-          $last_active = date('F j, g:i:s',$user->last_active);
-        } else {
-          $last_active = date('F j, Y, g:i:s',$user->last_active);
+        if (date('Y', time()) == date('Y', $user->last_active)) {
+          $last_active = date('F j, g:i:s', $user->last_active);
+        }
+        else {
+          $last_active = date('F j, Y, g:i:s', $user->last_active);
         }
 
-        if($user->is_group_admin == 1) {
-          $username = '@<strong>'.$user->mention_name.'</strong><br />'.$user->title;
-        } else {
-          $username = '@'.$user->mention_name.'<br />'.$user->title;
+        if ($user->is_group_admin == 1) {
+          $username = '@<strong>' . $user->mention_name .
+            '</strong><br />' . $user->title;
+        }
+        else {
+          $username = '@' . $user->mention_name . '<br />' . $user->title;
         }
 
-        $rows[] = array($photo,$user->user_id,$username,$user->email,$user->status,$last_active,$user->timezone);
+        $rows[] = array($photo, $user->user_id, $username, $user->email,
+          $user->status, $last_active, $user->timezone);
 
       }
     } catch (HipChat\hipchat_alerts_Exception $e) {
-      $content .= "Oops! Error: ".$e->getMessage();
+      $content .= "Oops! Error: " . $e->getMessage();
     }
 
     $output = theme('table', array('header' => $header, 'rows' => $rows));
 
     return $output;
-  } else {
-    watchdog('hipchat-alerts', 'An error loading the hipchat-php library occurred.', array(), WATCHDOG_ERROR);
+  }
+  else {
+    watchdog('hipchat-alerts',
+      'An error loading the hipchat-php library occurred.',
+      array(), WATCHDOG_ERROR);
   }
 }
 

@@ -20,7 +20,7 @@ function hipchat_alerts_install() {
 /**
  * Implements hook_uninstall()
  */
-function hipchat_alerts_uninstall(){
+function hipchat_alerts_uninstall() {
   variable_del('hipchat_api_version');
   variable_del('hipchat_room_id');
   variable_del('hipchat_v1_api_token');
@@ -35,32 +35,22 @@ function hipchat_alerts_uninstall(){
  * Implements hook_requirements()
  * Checks API version
  */
-function hipchat_alerts_requirements($phase){
+function hipchat_alerts_requirements($phase) {
   $requirements = array();
 
-  if($phase == 'runtime'){
-    // Since we don't actually have a need to switch version numbers yet
-//    switch (HC_API_VERSION) {
-//      case 0:
-//        break;
-//      case 1:
-//        drupal_set_message(t('HipChat API v2 is not yet supported. : ('), 'warning');
-//        break;
-//      default:
-//        drupal_set_message(t('HipChat Alerts has not yet been configured.'), 'error');
-//    }
-
+  if ($phase == 'runtime') {
     $library = libraries_load('hipchat-php');
-    if(!$library['loaded']){
+    if (!$library['loaded']) {
       $requirements['hipchat-php'] = array(
         'title' => t('HipChat Alerts'),
         'value' => t('HipChat PHP v1 library not found.'),
         'severity' => REQUIREMENT_ERROR,
       );
-    } else {
+    }
+    else {
       $requirements['hipchat-php'] = array(
         'title' => t('HipChat Alerts'),
-        'value' => t('HipChat PHP v1 library installed at <i>@path</i>', array('@path' => libraries_get_path('hipchat-php').'/src/HipChat/HipChat.php')),
+        'value' => t('HipChat PHP v1 library installed at <i>@path</i>', array('@path' => libraries_get_path('hipchat-php') . '/src/HipChat/HipChat.php')),
         'severity' => REQUIREMENT_OK,
       );;
     }

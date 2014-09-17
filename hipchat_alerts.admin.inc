@@ -36,8 +36,9 @@ function hipchat_alerts_config_form($form, &$form_state) {
   $form['v1']['hipchat_v1_api_token'] = array(
     '#type' => 'textfield',
     '#title' => t('API Token'),
-    '#description' => t('To generate a HipChat API v1 token, you will need to be a group administrator'),
-    '#default_value' => variable_get('hipchat_v1_api_token',''),
+    '#description' =>
+      t('To generate a HipChat API v1 token, you will need to be a group administrator'),
+    '#default_value' => variable_get('hipchat_v1_api_token', ''),
     '#size' => 60,
     '#maxlength' => 128,
     '#required' => FALSE,
@@ -46,10 +47,11 @@ function hipchat_alerts_config_form($form, &$form_state) {
   $form['v1']['hipchat_room_id'] = array(
     '#type' => 'textfield',
     '#title' => t('Room ID'),
-    '#default_value' => variable_get('hipchat_room_id',''),
+    '#default_value' => variable_get('hipchat_room_id', ''),
     '#size' => 25,
     '#required' => TRUE,
-    '#description' => t('All notifications sent from this module will be posted in this room.'),
+    '#description' =>
+      t('All notifications sent from this module will be posted in this room.'),
   );
 
   $form['hipchat_watchdog_severity'] = array(
@@ -58,15 +60,15 @@ function hipchat_alerts_config_form($form, &$form_state) {
     '#default_value' => variable_get('hipchat_watchdog_severity', WATCHDOG_ERROR),
     '#description' => t('Choose the minimum level of severity to send watchdog notices to HipChat.'),
     '#options' => array(
-      WATCHDOG_EMERGENCY => WATCHDOG_EMERGENCY.': Emergency',
-      WATCHDOG_ALERT => WATCHDOG_ALERT.': Alert',
-      WATCHDOG_CRITICAL => WATCHDOG_CRITICAL.': Critical',
-      WATCHDOG_ERROR => WATCHDOG_ERROR.': Error',
-      WATCHDOG_WARNING => WATCHDOG_WARNING.': Warning',
-      WATCHDOG_NOTICE => WATCHDOG_NOTICE.': Notice',
-      WATCHDOG_INFO => WATCHDOG_INFO.': Info',
-      WATCHDOG_DEBUG => WATCHDOG_DEBUG.': Debug',
-      null => 'OFF',
+      WATCHDOG_EMERGENCY => WATCHDOG_EMERGENCY . ': Emergency',
+      WATCHDOG_ALERT => WATCHDOG_ALERT . ': Alert',
+      WATCHDOG_CRITICAL => WATCHDOG_CRITICAL . ': Critical',
+      WATCHDOG_ERROR => WATCHDOG_ERROR . ': Error',
+      WATCHDOG_WARNING => WATCHDOG_WARNING . ': Warning',
+      WATCHDOG_NOTICE => WATCHDOG_NOTICE . ': Notice',
+      WATCHDOG_INFO => WATCHDOG_INFO . ': Info',
+      WATCHDOG_DEBUG => WATCHDOG_DEBUG . ': Debug',
+      NULL => 'OFF',
     )
   );
 
@@ -74,27 +76,28 @@ function hipchat_alerts_config_form($form, &$form_state) {
     '#type' => 'checkbox',
     '#title' => 'Development environment?',
     '#description' => t('HipChat Alerts will not send messages if this is checked. Alerts are only relevant from production environments.'),
-    '#default_value' => variable_get('site_environment',null),
+    '#default_value' => variable_get('site_environment', NULL),
   );
 
   return system_settings_form($form);
 }
 
-function hipchat_alerts_config_info($apivers,$token,$room) {
+function hipchat_alerts_config_info($apivers, $token, $room) {
 
-  if(variable_get('site_environment') == 1) {
-    drupal_set_message(t('The site environment is currently set to development. HipChat Alerts will not send any messages.'),'warning');
+  if (variable_get('site_environment') == 1) {
+    drupal_set_message(t('The site environment is currently set to development. HipChat Alerts will not send any messages.'), 'warning');
   }
 
   $content = '';
   $form = array();
 
-  if(!is_null($apivers)) {
+  if (!is_null($apivers)) {
 
     $content .= '<h2>Group Users</h2>';
-    $content .= hipchat_users_table();
+    $content .= hipchat_users_table(variable_get('hipchat_room_id', ''));
 
-  } else {
+  }
+  else {
     drupal_set_message(t('HipChat Alerts has not yet been configured. Please provide your API Key.'), 'error');
   }
 
@@ -149,5 +152,5 @@ function _hipchat_alerts_config_sandbox_test($message) {
   $status = ($success) ? 'status' : 'error';
 
   watchdog('hipchat-alerts', $message, array(), WATCHDOG_ERROR);
-  drupal_set_message($message, $status);
+  drupal_set_message(t('@message', array('@message' => $message)), $status);
 }
