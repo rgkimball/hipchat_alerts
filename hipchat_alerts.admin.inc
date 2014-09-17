@@ -114,14 +114,15 @@ function hipchat_alerts_config_form($form, &$form_state) {
     '#default_value' => variable_get('hipchat_watchdog_severity', WATCHDOG_ERROR),
     '#description' => t('Choose the minimum level of severity to send watchdog notices to HipChat.'),
     '#options' => array(
-      WATCHDOG_EMERGENCY => 'WATCHDOG_EMERGENCY ('.WATCHDOG_EMERGENCY.')',
-      WATCHDOG_ALERT => 'WATCHDOG_ALERT ('.WATCHDOG_ALERT.')',
-      WATCHDOG_CRITICAL => 'WATCHDOG_CRITICAL ('.WATCHDOG_CRITICAL.')',
-      WATCHDOG_ERROR => 'WATCHDOG_ERROR ('.WATCHDOG_ERROR.')',
-      WATCHDOG_WARNING => 'WATCHDOG_WARNING ('.WATCHDOG_WARNING.')',
-      WATCHDOG_NOTICE => 'WATCHDOG_NOTICE ('.WATCHDOG_NOTICE.')',
-      WATCHDOG_INFO => 'WATCHDOG_INFO ('.WATCHDOG_INFO.')',
-      WATCHDOG_DEBUG => 'WATCHDOG_DEBUG ('.WATCHDOG_DEBUG.')',
+      WATCHDOG_EMERGENCY => WATCHDOG_EMERGENCY.': Emergency',
+      WATCHDOG_ALERT => WATCHDOG_ALERT.': Alert',
+      WATCHDOG_CRITICAL => WATCHDOG_CRITICAL.': Critical',
+      WATCHDOG_ERROR => WATCHDOG_ERROR.': Error',
+      WATCHDOG_WARNING => WATCHDOG_WARNING.': Warning',
+      WATCHDOG_NOTICE => WATCHDOG_NOTICE.': Notice',
+      WATCHDOG_INFO => WATCHDOG_INFO.': Info',
+      WATCHDOG_DEBUG => WATCHDOG_DEBUG.': Debug',
+      null => 'OFF',
     )
   );
 

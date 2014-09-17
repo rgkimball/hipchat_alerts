@@ -99,7 +99,7 @@ function hipchat_alerts_libraries_info() {
  */
 function hipchat_alerts_watchdog($log_entry) {
 
-  if($log_entry['severity'] <= variable_get('hipchat_watchdog_severity', WATCHDOG_ERROR)) {
+  if(variable_get('hipchat_watchdog_severity') != null && $log_entry['severity'] <= variable_get('hipchat_watchdog_severity', WATCHDOG_ERROR)) {
     // Can't pass null as second variable of t()
     (isset($log_entry['variables'])) ? $vars = $log_entry['variables'] : $vars = array();
 
