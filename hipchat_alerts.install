@@ -1,0 +1,29 @@
+<?php
+/**
+ * @file
+ * Installation
+ * @author rkimball
+ * @package hipchat_alerts
+ * @version 0.0.1
+ */
+
+
+/**
+ * Implements hook_install()
+ * Make sure we're calling hook_libraries_info for hipchat-php
+ * @return mixed
+ */
+function hipchat_alerts_install() {
+
+  // Make sure we're calling hook_libraries_info for hipchat-php
+  cache_clear_all();
+}
+
+function hipchat_alerts_uninstall(){
+  variable_del('hipchat_api_version');
+  variable_del('hipchat_room_id');
+  variable_del('hipchat_v1_api_token');
+  variable_del('hipchat_v2_api_key');
+  variable_del('hipchat_v2_api_secret');
+  variable_del('hipchat_v2_api_token');
+}
