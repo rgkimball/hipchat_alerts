@@ -98,7 +98,44 @@ function hipchat_alerts_libraries_info() {
  * @param array $log_entry
  */
 function hipchat_alerts_watchdog($log_entry) {
-  hipchat_alerts_message(t($log_entry['message'].', '.$log_entry['variables'].', '.$GLOBALS['base_url']));
+
+  if($log_entry['severity'] <= variable_get('hipchat_watchdog_severity', WATCHDOG_ERROR)) {
+    // Can't pass null as second variable of t()
+    (isset($log_entry['variables'])) ? $vars = $log_entry['variables'] : $vars = array();
+
+    // Convert severity to human speak
+    switch($log_entry['severity']){
+      case 0:
+        $severity = ' (emergency)';
+        break;
+      case 1:
+        $severity = ' (alert)';
+        break;
+      case 2:
+        $severity = ' (critical)';
+        break;
+      case 3:
+        $severity = ' (error)';
+        break;
+      case 4:
+        $severity = ' (warning)';
+        break;
+      case 5:
+        $severity = ' (notice)';
+        break;
+      case 6:
+        $severity = ' (info)';
+        break;
+      case 7:
+        $severity = ' (debug)';
+        break;
+      default:
+        $severity = '';
+    }
+
+    hipchat_alerts_message(t($log_entry['type'].$severity.' : '.$log_entry['message'], $vars), variable_get('site_name', 'Drupal'));
+  }
+
 }
 
 /**

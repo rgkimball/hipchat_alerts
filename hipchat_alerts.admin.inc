@@ -108,6 +108,23 @@ function hipchat_alerts_config_form($form, &$form_state) {
     '#description' => t('All notifications sent from this module will be posted in this room.'),
   );
 
+  $form['hipchat_watchdog_severity'] = array(
+    '#type' => 'select',
+    '#title' => t('Watchdog Severity Reporting'),
+    '#default_value' => variable_get('hipchat_watchdog_severity', WATCHDOG_ERROR),
+    '#description' => t('Choose the minimum level of severity to send watchdog notices to HipChat.'),
+    '#options' => array(
+      WATCHDOG_EMERGENCY => 'WATCHDOG_EMERGENCY ('.WATCHDOG_EMERGENCY.')',
+      WATCHDOG_ALERT => 'WATCHDOG_ALERT ('.WATCHDOG_ALERT.')',
+      WATCHDOG_CRITICAL => 'WATCHDOG_CRITICAL ('.WATCHDOG_CRITICAL.')',
+      WATCHDOG_ERROR => 'WATCHDOG_ERROR ('.WATCHDOG_ERROR.')',
+      WATCHDOG_WARNING => 'WATCHDOG_WARNING ('.WATCHDOG_WARNING.')',
+      WATCHDOG_NOTICE => 'WATCHDOG_NOTICE ('.WATCHDOG_NOTICE.')',
+      WATCHDOG_INFO => 'WATCHDOG_INFO ('.WATCHDOG_INFO.')',
+      WATCHDOG_DEBUG => 'WATCHDOG_DEBUG ('.WATCHDOG_DEBUG.')',
+    )
+  );
+
   $form['site_environment'] = array(
     '#type' => 'checkbox',
     '#title' => 'Development environment?',
@@ -131,23 +148,6 @@ function hipchat_alerts_config_info($apivers,$token,$room) {
 
     $content .= '<h2>Group Users</h2>';
     $content .= hipchat_users_table();
-
-    // test message
-    $sender = 'HC-Alert';
-    $msg = 'HipChat Alert System Test';
-
-    $form['hipchat_test'] = array(
-      '#type' => 'button',
-      '#name' => 'Send a Test',
-      '#value' => t('Send a Test'),
-//			'#ajax' => array(
-//				'callback' => hipchat_alerts_message($sender,$msg),
-//				'wrapper' => 'test-wrapper',
-//				'effect' => 'fade',
-//			),
-    );
-
-//		hipchat_alerts_message($sender, $msg);
 
   } else {
     drupal_set_message(t('HipChat Alerts has not yet been configured. Please provide your API Key.'), 'error');
