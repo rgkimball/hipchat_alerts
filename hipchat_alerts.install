@@ -17,6 +17,9 @@ function hipchat_alerts_install() {
   cache_clear_all();
 }
 
+/**
+ * Implements hook_uninstall()
+ */
 function hipchat_alerts_uninstall(){
   variable_del('hipchat_api_version');
   variable_del('hipchat_room_id');
