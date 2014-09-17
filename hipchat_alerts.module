@@ -152,10 +152,9 @@ function hipchat_alerts_test_messaging($form, $form_state) { $message = "Testing
  * @return bool Sends a message to the HipChat room defined in config
  */
 function hipchat_alerts_message($message, $sender = 'Drupal', $room = HC_ROOM_ID) {
-  $library = libraries_load('hipchat-php');
   $success = FALSE;
 
-  if ($library['loaded']) {
+  if (($library = libraries_load('hipchat-php')) && $library['loaded']) {
     $token = variable_get('hipchat_v1_api_token');
     $target = HC_API_ENDPOINT;
     $hc = new HipChat\HipChat($token, $target);
@@ -176,9 +175,12 @@ function hipchat_alerts_message($message, $sender = 'Drupal', $room = HC_ROOM_ID
       catch (Exception $e) {
         $message = "Error sending HipChat message: " . $e->getMessage() . "\n";
         drupal_set_message($message);
+        watchdog('hipchat_alerts', $message, $variables = array(), WATCHDOG_ERROR);
         $success = FALSE;
       }
     }
+  } else {
+    watchdog('hipchat-alerts', 'An error loading the hipchat-php library occured.', array(), WATCHDOG_ERROR);
   }
 
   return $success;
