@@ -54,7 +54,7 @@ function hipchat_alerts_menu() {
     'description' => t('Provides a list of rooms and users for current configuration.'),
     'page callback' => 'hipchat_alerts_config_info',
     'page arguments' => array(HC_API_VERSION,HC_API_TOKEN,HC_ROOM_ID),
-    'access arguments' => array('access site configuration'),
+    'access arguments' => array('administer hipchat alerts'),
     'type' => MENU_LOCAL_TASK,
     'file' => 'hipchat_alerts.admin.inc',
   );
@@ -64,7 +64,7 @@ function hipchat_alerts_menu() {
     'description' => t('Sandbox page for testing messages'),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('hipchat_alerts_config_sandbox_form'),
-    'access arguments' => array('access site configuration'),
+    'access arguments' => array('administer hipchat alerts'),
     'type' => MENU_LOCAL_TASK,
     'file' => 'hipchat_alerts.admin.inc',
   );
