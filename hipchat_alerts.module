@@ -2,15 +2,14 @@
 /**
  * @file
  * Basic connectivity and functions
- * @author rkimball
+ * @author rgkimball/gabesullice
  * @package hipchat_alerts
- * @version 0.0.1
+ * @version 1.0.0
  */
 
-//define('HC_API_VERSION',variable_get('hipchat_api_version'));
-define('HC_API_VERSION', 0);
-define('HC_API_TOKEN', variable_get('hipchat_v1_api_token', '8f5c0ac8672bb5ebbaca8c1aa0a65e'));
-define('HC_ROOM_ID', variable_get('hipchat_room_id', '739507'));
+define('HC_API_VERSION', 0); // Eventually this will change based on which version of the API you're using
+define('HC_API_TOKEN', variable_get('hipchat_v1_api_token', ''));
+define('HC_ROOM_ID', variable_get('hipchat_room_id', ''));
 define('HC_API_ENDPOINT', 'https://api.hipchat.com');
 
 /**
@@ -92,14 +91,13 @@ function hipchat_alerts_libraries_info() {
 
 /**
  * Implements hook_watchdog().
- *
  * Evaluates every watchdog log message and routes a message to hipchat if necessary.
- *
  * @param array $log_entry
  */
 function hipchat_alerts_watchdog($log_entry) {
+  $minimum = variable_get('hipchat_watchdog_severity', WATCHDOG_ERROR);
 
-  if(variable_get('hipchat_watchdog_severity') != null && $log_entry['severity'] <= variable_get('hipchat_watchdog_severity', WATCHDOG_ERROR)) {
+  if($minimum != null && $log_entry['severity'] <= $minimum) {
     // Can't pass null as second variable of t()
     (isset($log_entry['variables'])) ? $vars = $log_entry['variables'] : $vars = array();
 
@@ -141,7 +139,7 @@ function hipchat_alerts_watchdog($log_entry) {
 /**
  * Implements version callback for hook_libraries_info()
  *
- * Since hipchat-api doesn't have a version number specified in any files we
+ * Since hipchat-php doesn't have a version number specified in any files we
  * have to hijack the callback and just provide TRUE.
  */
 function hipchat_alerts_version_callback() {
@@ -184,6 +182,7 @@ function hipchat_alerts_message($message, $sender = 'Drupal', $room = HC_ROOM_ID
     if(strlen($sender) >= 15) {
       // HC only allows author names to be 15 characters, so if our message
       // exceeds that, we'll add the sender's name to the message instead
+      // In most cases, this is either 'Drupal' or site_name
       $msg = $message;
       $message = $sender . ": " . $msg;
       $sender = substr($sender,0,15);

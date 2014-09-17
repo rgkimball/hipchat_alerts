@@ -2,9 +2,9 @@
 /**
  * @file
  * Admin config pages
- * @author rkimball
+ * @author rgkimball/gabesullice
  * @package hipchat_alerts
- * @version 0.0.1
+ * @version 1.0.0
  */
 
 /**
@@ -19,19 +19,7 @@ function hipchat_alerts_config_form($form, &$form_state) {
     '#markup' => '<div style="padding:10px;border:1px solid #BEBFB9;margin-bottom:10px;"><p>The HipChat Alerts module allows Drupal to publish certain alerts to a HipChat room using the v1 API. This module requires a <a href="http://hipchat.com/account/api">HipChat API Key</a>. </p></div>',
   );
 
-  $form['hipchat_api_version'] = array(
-    '#type' => 'radios',
-    '#title' => t('API Version'),
-    '#description' => t('Please select which version of the HipChat API your lobby will use.'),
-    '#default_value' => variable_get('hipchat_api_version', null),
-    '#required' => TRUE,
-    '#options' => array(
-      t('v1'),
-      t('v2'),
-    ),
-
-  );
-
+  // Fields are grouped as v1 to prepare for v2 API integration
   $form['v1'] = array(
     '#type' => 'fieldset',
     '#states' => array(
@@ -42,64 +30,20 @@ function hipchat_alerts_config_form($form, &$form_state) {
   );
 
   $form['v1']['header'] = array(
-    '#markup' => '<h2>HipChat API v1 Settings</h2>',
+    '#markup' => '<h2>HipChat API Settings</h2>',
   );
 
   $form['v1']['hipchat_v1_api_token'] = array(
     '#type' => 'textfield',
     '#title' => t('API Token'),
     '#description' => t('To generate a HipChat API v1 token, you will need to be a group administrator'),
-    '#default_value' => variable_get('hipchat_v1_api_token',''), // fe2e7baec2d954125ce22937ff4c4a
+    '#default_value' => variable_get('hipchat_v1_api_token',''),
     '#size' => 60,
     '#maxlength' => 128,
     '#required' => FALSE,
   );
 
-
-  $form['v2'] = array(
-    '#type' => 'fieldset',
-    '#states' => array(
-      'visible' => array(
-        ':input[name="hipchat_api_version"]' => array('value' => 1),
-      ),
-    ),
-  );
-
-  $form['v2']['header'] = array(
-    '#markup' => '<h2>HipChat API v2 Settings</h2> HipChat API v2 is not yet supported.',
-  );
-
-  $form['v2']['hipchat_v2_api_token'] = array(
-    '#type' => 'textfield',
-    '#title' => t('OAuth2 Token'),
-    '#default_value' => variable_get('hipchat_v2_api_token',''),
-    '#size' => 60,
-    '#maxlength' => 128,
-    '#required' => FALSE,
-    '#disabled' => TRUE,
-  );
-
-  $form['v2']['hipchat_v2_api_key'] = array(
-    '#type' => 'textfield',
-    '#title' => t('OAuth2 Key'),
-    '#default_value' => variable_get('hipchat_v2_api_key',''),
-    '#size' => 60,
-    '#maxlength' => 128,
-    '#required' => FALSE,
-    '#disabled' => TRUE,
-  );
-
-  $form['v2']['hipchat_v2_api_secret'] = array(
-    '#type' => 'textfield',
-    '#title' => t('OAuth2 Secret'),
-    '#default_value' => variable_get('hipchat_v2_api_secret',''),
-    '#size' => 60,
-    '#maxlength' => 128,
-    '#required' => FALSE,
-    '#disabled' => TRUE,
-  );
-
-  $form['hipchat_room_id'] = array(
+  $form['v1']['hipchat_room_id'] = array(
     '#type' => 'textfield',
     '#title' => t('Room ID'),
     '#default_value' => variable_get('hipchat_room_id',''),
@@ -159,6 +103,11 @@ function hipchat_alerts_config_info($apivers,$token,$room) {
 }
 
 function hipchat_alerts_config_sandbox_form($form, &$form_state) {
+
+  $form['header'] = array(
+    '#markup' => '<div style="padding:10px;border:1px solid #BEBFB9;margin-bottom:10px;"><p>Use this form to test the messaging system before turning on other types of reporting. Check that your messages are sending to the right room.</p></div>',
+  );
+
   $form['test_result'] = array(
     '#type' => 'markup',
     '#markup' => '<div id="test-result"></div>',

@@ -1,7 +1,8 @@
 name = HipChat Alerts
 description = Sends alerts to HipChat room(s) if certain administrative actions are taken
 core = 7.x
-package = Elevated Third
+package = Development
+version = 1.0.0
 configure = admin/config/development/hipchat-alerts
 
 dependencies[] = libraries
