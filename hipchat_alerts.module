@@ -106,6 +106,17 @@ function hipchat_alerts_libraries_info() {
 }
 
 /**
+ * Implements hook_watchdog().
+ *
+ * Evaluates ever watchdog log message and routes a message to hipchat if necessary.
+ *
+ * @param array $log_entry
+ */
+function hipchat_alerts_watchdog($log_entry) {
+  hipchat_alerts_message(t($log_entry['message'], $log_entry['variables']), $GLOBALS['base_url']);
+}
+
+/**
  * Implements version callback for hook_libraries_info()
  *
  * Since hipchat-api doesn't have a version number specified in any files we
