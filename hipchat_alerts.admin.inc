@@ -198,5 +198,6 @@ function _hipchat_alerts_config_sandbox_test($message) {
   $message = ($success) ? 'Success' : 'Message was unable to send';
   $status = ($success) ? 'status' : 'error';
 
+  watchdog('hipchat-alerts', $message, array(), WATCHDOG_ERROR);
   drupal_set_message($message, $status);
 }
