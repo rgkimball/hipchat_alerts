@@ -13,24 +13,6 @@ define('HC_API_TOKEN', variable_get('hipchat_v1_api_token', '8f5c0ac8672bb5ebbac
 define('HC_ROOM_ID', variable_get('hipchat_room_id', '739507'));
 define('HC_API_ENDPOINT', 'https://api.hipchat.com');
 
-
-/**
- * Implements hook_init()
- * Defines
- */
-function hipchat_alerts_init(){
-  switch (HC_API_VERSION) {
-    case 0:
-      break;
-    case 1:
-      drupal_set_message(t('HipChat API v2 is not yet supported. : ('), 'warning');
-      break;
-    default:
-      drupal_set_message(t('HipChat Alerts has not yet been configured.'), 'error');
-  }
-
-}
-
 /**
  * Implements hook_menu()
  * @return mixed
@@ -183,7 +165,7 @@ function hipchat_alerts_message($message, $sender = 'Drupal', $room = HC_ROOM_ID
       }
     }
   } else {
-    watchdog('hipchat-alerts', 'An error loading the hipchat-php library occured.', array(), WATCHDOG_ERROR);
+    watchdog('hipchat-alerts', 'An error loading the hipchat-php library occurred.', array(), WATCHDOG_ERROR);
   }
 
   return $success;
@@ -236,7 +218,7 @@ function hipchat_users_table($room = HC_ROOM_ID) {
 
     return $output;
   } else {
-    watchdog('hipchat-alerts', 'An error loading the hipchat-php library occured.', array(), WATCHDOG_ERROR);
+    watchdog('hipchat-alerts', 'An error loading the hipchat-php library occurred.', array(), WATCHDOG_ERROR);
   }
 }
 
