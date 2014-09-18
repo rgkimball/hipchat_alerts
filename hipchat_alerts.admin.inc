@@ -9,13 +9,12 @@
 
 /**
  * Implements hook_form().
- *
- * @param $form
- * @param $form_state
- *
- * @return mixed
  */
 function hipchat_alerts_config_form($form, &$form_state) {
+
+  if (variable_get('hipchat_alerts_site_environment') == 1) {
+    drupal_set_message(t('The site environment is currently set to development. HipChat Alerts will not send any messages.'), 'warning');
+  }
 
   $form['header'] = array(
     '#markup' => '<div style="padding:10px;border:1px solid #BEBFB9;margin-bottom:10px;"><p>The HipChat Alerts module allows Drupal to publish certain alerts to a HipChat room using the v1 API. This module requires a <a href="http://hipchat.com/account/api">HipChat API Key</a>. </p></div>',
@@ -93,44 +92,46 @@ function hipchat_alerts_config_form($form, &$form_state) {
 /**
  * Builds admin group info page.
  *
- * @param $apivers
+ * @param $api
  * @param $token
- * @param $room
  *
  * @return string
  */
-function hipchat_alerts_config_info($apivers, $token, $room) {
+function hipchat_alerts_config_info($token, $api) {
+
+  $token = $token ?: variable_get('hipchat_alerts_v1_api_token', '');
+  $api = $api ?: HIPCHAT_ALERTS_API_VERSION;
 
   if (variable_get('hipchat_alerts_site_environment') == 1) {
     drupal_set_message(t('The site environment is currently set to development. HipChat Alerts will not send any messages.'), 'warning');
   }
 
   $content = '';
-  $form = array();
 
-  if (!is_null($apivers)) {
+  if (isset($api) && strlen($token) > 0) {
 
     $content .= '<h2>Group Users</h2>';
     $content .= hipchat_alerts_users_table(variable_get('hipchat_alerts_room_id', ''));
 
   }
-  else {
+  elseif (strlen($token) <= 0) {
     drupal_set_message(t('HipChat Alerts has not yet been configured. Please provide your API Key.'), 'error');
   }
 
+
   return $content;
-  return system_settings_form($form);
 }
 
 /**
+ * Implements hook_form().
+ *
  * Builds admin sandbox page.
- *
- * @param $form
- * @param $form_state
- *
- * @return mixed
  */
 function hipchat_alerts_config_sandbox_form($form, &$form_state) {
+
+  if (variable_get('hipchat_alerts_site_environment') == 1) {
+    drupal_set_message(t('The site environment is currently set to development. HipChat Alerts will not send any messages.'), 'warning');
+  }
 
   $form['header'] = array(
     '#markup' => '<div style="padding:10px;border:1px solid #BEBFB9;margin-bottom:10px;"><p>Use this form to test the messaging system before turning on other types of reporting. Check that your messages are sending to the right room.</p></div>',
