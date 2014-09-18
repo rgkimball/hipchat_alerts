@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Admin config pages
+ * Admin config pages.
  * @author rgkimball/gabesullice
  * @package hipchat_alerts
  * @version 1.0.0
@@ -38,7 +38,7 @@ function hipchat_alerts_config_form($form, &$form_state) {
     '#title' => t('API Token'),
     '#description' =>
       t('To generate a HipChat API v1 token, you will need to be a group administrator'),
-    '#default_value' => variable_get('hipchat_v1_api_token', ''),
+    '#default_value' => variable_get('hipchat_alerts_v1_api_token', ''),
     '#size' => 60,
     '#maxlength' => 128,
     '#required' => FALSE,
@@ -47,7 +47,7 @@ function hipchat_alerts_config_form($form, &$form_state) {
   $form['v1']['hipchat_room_id'] = array(
     '#type' => 'textfield',
     '#title' => t('Room ID'),
-    '#default_value' => variable_get('hipchat_room_id', ''),
+    '#default_value' => variable_get('hipchat_alerts_room_id', ''),
     '#size' => 25,
     '#required' => TRUE,
     '#description' =>
@@ -57,7 +57,7 @@ function hipchat_alerts_config_form($form, &$form_state) {
   $form['hipchat_watchdog_severity'] = array(
     '#type' => 'select',
     '#title' => t('Watchdog Severity Reporting'),
-    '#default_value' => variable_get('hipchat_watchdog_severity', WATCHDOG_ERROR),
+    '#default_value' => variable_get('hipchat_alerts_watchdog_severity', WATCHDOG_ERROR),
     '#description' => t('Choose the minimum level of severity to send watchdog notices to HipChat.'),
     '#options' => array(
       WATCHDOG_EMERGENCY => WATCHDOG_EMERGENCY . ': Emergency',
@@ -76,7 +76,7 @@ function hipchat_alerts_config_form($form, &$form_state) {
     '#type' => 'checkbox',
     '#title' => 'Development environment?',
     '#description' => t('HipChat Alerts will not send messages if this is checked. Alerts are only relevant from production environments.'),
-    '#default_value' => variable_get('site_environment', NULL),
+    '#default_value' => variable_get('hipchat_alerts_site_environment', NULL),
   );
 
   return system_settings_form($form);
@@ -84,7 +84,7 @@ function hipchat_alerts_config_form($form, &$form_state) {
 
 function hipchat_alerts_config_info($apivers, $token, $room) {
 
-  if (variable_get('site_environment') == 1) {
+  if (variable_get('hipchat_alerts_site_environment') == 1) {
     drupal_set_message(t('The site environment is currently set to development. HipChat Alerts will not send any messages.'), 'warning');
   }
 
@@ -94,7 +94,7 @@ function hipchat_alerts_config_info($apivers, $token, $room) {
   if (!is_null($apivers)) {
 
     $content .= '<h2>Group Users</h2>';
-    $content .= hipchat_users_table(variable_get('hipchat_room_id', ''));
+    $content .= hipchat_alerts_users_table(variable_get('hipchat_alerts_room_id', ''));
 
   }
   else {
