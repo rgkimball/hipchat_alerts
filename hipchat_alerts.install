@@ -11,7 +11,6 @@
  * Implements hook_install().
  *
  * Make sure we're calling hook_libraries_info for hipchat-php.
- *
  */
 function hipchat_alerts_install() {
   cache_clear_all();
@@ -30,7 +29,6 @@ function hipchat_alerts_uninstall() {
   variable_del('hipchat_alerts_watchdog_severity');
   variable_del('hipchat_alerts_site_environment');
 }
-
 
 /**
  * Implements hook_requirements().

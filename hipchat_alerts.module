@@ -15,8 +15,6 @@ define('HIPCHAT_ALERTS_API_ENDPOINT', 'https://api.hipchat.com');
  * Implements hook_menu().
  *
  * Defines menu items for admin interface.
- *
- * @return mixed
  */
 function hipchat_alerts_menu() {
 
@@ -64,8 +62,6 @@ function hipchat_alerts_menu() {
  * Implements hook_permission().
  *
  * Module admin access
- *
- * @return mixed
  */
 function hipchat_alerts_permission() {
   return array(
@@ -108,8 +104,7 @@ function hipchat_alerts_watchdog($log_entry) {
 
   if ($minimum != NULL && $log_entry['severity'] <= $minimum) {
     // Can't pass null as second variable of t().
-    (isset($log_entry['variables'])) ?
-      $vars = $log_entry['variables'] : $vars = array();
+    (isset($log_entry['variables'])) ? $vars = $log_entry['variables'] : $vars = array();
 
     // Convert severity to human speak.
     $severity = array('emergency', 'alert', 'critical', 'error', 'warning',
@@ -146,6 +141,7 @@ function hipchat_alerts_version_callback() {
  *
  * @param $sender
  * @param $message
+ *
  * @return bool
  */
 function hipchat_alerts_message($message, $sender = 'Drupal') {
@@ -158,11 +154,9 @@ function hipchat_alerts_message($message, $sender = 'Drupal') {
     $hc = new HipChat\HipChat($token, $target);
 
     if (strlen($sender) >= 15) {
-      /**
-       * HC only allows author names to be 15 characters, so if our message
+      /* HC only allows author names to be 15 characters, so if our message
        * exceeds that, we'll add the sender's name to the message instead
-       * In most cases, this is either 'Drupal' or site_name
-       */
+       * In most cases, this is either 'Drupal' or site_name */
       $msg = $message;
       $message = $sender . ": " . $msg;
       $sender = substr($sender, 0, 15);
@@ -197,6 +191,7 @@ function hipchat_alerts_message($message, $sender = 'Drupal') {
  * Build user table
  *
  * @param $room
+ *
  * @return mixed
  */
 function hipchat_alerts_users_table($room) {
