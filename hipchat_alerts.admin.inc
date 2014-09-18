@@ -33,7 +33,7 @@ function hipchat_alerts_config_form($form, &$form_state) {
     '#markup' => '<h2>HipChat API Settings</h2>',
   );
 
-  $form['v1']['hipchat_v1_api_token'] = array(
+  $form['v1']['hipchat_alerts_v1_api_token'] = array(
     '#type' => 'textfield',
     '#title' => t('API Token'),
     '#description' =>
@@ -44,7 +44,7 @@ function hipchat_alerts_config_form($form, &$form_state) {
     '#required' => FALSE,
   );
 
-  $form['v1']['hipchat_room_id'] = array(
+  $form['v1']['hipchat_alerts_room_id'] = array(
     '#type' => 'textfield',
     '#title' => t('Room ID'),
     '#default_value' => variable_get('hipchat_alerts_room_id', ''),
@@ -54,25 +54,33 @@ function hipchat_alerts_config_form($form, &$form_state) {
       t('All notifications sent from this module will be posted in this room.'),
   );
 
-  $form['hipchat_watchdog_severity'] = array(
+  $form['hipchat_alerts_watchdog_severity'] = array(
     '#type' => 'select',
     '#title' => t('Watchdog Severity Reporting'),
     '#default_value' => variable_get('hipchat_alerts_watchdog_severity', WATCHDOG_ERROR),
     '#description' => t('Choose the minimum level of severity to send watchdog notices to HipChat.'),
     '#options' => array(
-      WATCHDOG_EMERGENCY => WATCHDOG_EMERGENCY . ': Emergency',
-      WATCHDOG_ALERT => WATCHDOG_ALERT . ': Alert',
-      WATCHDOG_CRITICAL => WATCHDOG_CRITICAL . ': Critical',
-      WATCHDOG_ERROR => WATCHDOG_ERROR . ': Error',
-      WATCHDOG_WARNING => WATCHDOG_WARNING . ': Warning',
-      WATCHDOG_NOTICE => WATCHDOG_NOTICE . ': Notice',
-      WATCHDOG_INFO => WATCHDOG_INFO . ': Info',
-      WATCHDOG_DEBUG => WATCHDOG_DEBUG . ': Debug',
-      NULL => 'OFF',
+      WATCHDOG_EMERGENCY => t('@severity: Emergency',
+        array('@severity' => WATCHDOG_EMERGENCY)),
+      WATCHDOG_ALERT => t('@severity: Alert',
+        array('@severity' => WATCHDOG_ALERT)),
+      WATCHDOG_CRITICAL => t('@severity: Critical',
+        array('@severity' => WATCHDOG_CRITICAL)),
+      WATCHDOG_ERROR => t('@severity: Error',
+        array('@severity' => WATCHDOG_ERROR)),
+      WATCHDOG_WARNING => t('@severity: Warning',
+        array('@severity' => WATCHDOG_WARNING)),
+      WATCHDOG_NOTICE => t('@severity: Notice',
+        array('@severity' => WATCHDOG_NOTICE)),
+      WATCHDOG_INFO => t('@severity: Info',
+        array('@severity' => WATCHDOG_INFO)),
+      WATCHDOG_DEBUG => t('@severity: Debug',
+        array('@severity' => WATCHDOG_DEBUG)),
+      NULL => t('OFF'),
     )
   );
 
-  $form['site_environment'] = array(
+  $form['hipchat_alerts_site_environment'] = array(
     '#type' => 'checkbox',
     '#title' => 'Development environment?',
     '#description' => t('HipChat Alerts will not send messages if this is checked. Alerts are only relevant from production environments.'),
@@ -125,7 +133,7 @@ function hipchat_alerts_config_sandbox_form($form, &$form_state) {
     '#value' => t('Send Test'),
     '#submit' => array('hipchat_alerts_config_sandbox_form_submit'),
     '#ajax' => array(
-      'callback' => 'hipchat_alerts_config_sandbox_form_callback',
+      'callback' => 'hipchat_alerts_config_sandbox_form_callback', 
       'wrapper' => 'test-result',
       'method' => 'replace',
       'effect' => 'fade',

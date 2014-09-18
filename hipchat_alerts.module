@@ -13,9 +13,9 @@ define('HIPCHAT_ALERTS_API_ENDPOINT', 'https://api.hipchat.com');
 
 /**
  * Implements hook_menu().
+ * Defines menu items for admin interface.
  *
  * @return mixed
- * Defines menu items for admin interface
  */
 function hipchat_alerts_menu() {
 
@@ -61,9 +61,9 @@ function hipchat_alerts_menu() {
 
 /**
  * Implements hook_permission().
+ * Module admin access
  *
  * @return mixed
- * Module admin access
  */
 function hipchat_alerts_permission() {
   return array(
@@ -96,8 +96,7 @@ function hipchat_alerts_libraries_info() {
 
 /**
  * Implements hook_watchdog().
- * Evaluates every watchdog log message and routes a message
- * to hipchat if necessary.
+ * Evaluates every watchdog log message and routes a message if necessary.
  *
  * @param array $log_entry
  */
@@ -105,16 +104,23 @@ function hipchat_alerts_watchdog($log_entry) {
   $minimum = variable_get('hipchat_alerts_watchdog_severity', WATCHDOG_ERROR);
 
   if ($minimum != NULL && $log_entry['severity'] <= $minimum) {
-    // Can't pass null as second variable of t()
+    // Can't pass null as second variable of t().
     (isset($log_entry['variables'])) ?
       $vars = $log_entry['variables'] : $vars = array();
 
-    // Convert severity to human speak
-    $severity = array('(emergency)', ' (alert)', ' (critical)', ' (error)',
-      ' (warning)', ' (notice)', ' (info)', ' (debug)');
+    // Convert severity to human speak.
+    $severity = array('emergency', 'alert', 'critical', 'error', 'warning',
+      'notice', 'info', 'debug');
 
-    hipchat_alerts_message(t($log_entry['type'] .
-      $severity[$log_entry['severity']] . ' : ' . $log_entry['message'], $vars),
+    $vars = $vars +
+      array(
+        '@type'     => $log_entry['type'],
+        '@severity' => $severity[$log_entry['severity']],
+        '@message'  => $log_entry['message'],
+        '@url'      => $GLOBALS['base_url']
+      );
+
+    hipchat_alerts_message(t('@type (@severity): @message [@url]', $vars),
       variable_get('site_name', 'Drupal'));
   }
 
@@ -166,8 +172,7 @@ function hipchat_alerts_message($message, $sender = 'Drupal') {
       catch (Exception $e) {
         drupal_set_message(t('Error sending HipChat message: @message'),
           array('@message' => $e->getMessage()));
-        watchdog('hipchat_alerts', $message,
-          $variables = array(), WATCHDOG_ERROR);
+        watchdog('hipchat_alerts', $message, WATCHDOG_ERROR);
         $success = FALSE;
       }
     }
