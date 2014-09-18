@@ -36,26 +36,31 @@ function hipchat_alerts_uninstall() {
  * Checks if library is present.
  *
  * @param $phase
+ *
  * @return mixed
  */
 function hipchat_alerts_requirements($phase) {
   $requirements = array();
 
+  $title = get_t('HipChat Alerts');
+  $not_found = get_t('HipChat PHP v1 library not found.');
+  $lib_path = get_t('HipChat PHP v1 library installed at <i>@path</i>',
+    array('@path' => libraries_get_path('hipchat-php') .
+      '/src/HipChat/HipChat.php'));
+
   if ($phase == 'runtime') {
     $library = libraries_load('hipchat-php');
     if (!$library['loaded']) {
       $requirements['hipchat-php'] = array(
-        'title' => t('HipChat Alerts'),
-        'value' => t('HipChat PHP v1 library not found.'),
+        'title' => $title,
+        'value' => $not_found,
         'severity' => REQUIREMENT_ERROR,
       );
     }
     else {
       $requirements['hipchat-php'] = array(
-        'title' => t('HipChat Alerts'),
-        'value' => t('HipChat PHP v1 library installed at <i>@path</i>',
-          array('@path' => libraries_get_path('hipchat-php') .
-            '/src/HipChat/HipChat.php')),
+        'title' => $title,
+        'value' => $lib_path,
         'severity' => REQUIREMENT_OK,
       );;
     }

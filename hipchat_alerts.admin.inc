@@ -8,10 +8,11 @@
  */
 
 /**
- * Implements hook_form()
+ * Implements hook_form().
  *
  * @param $form
  * @param $form_state
+ *
  * @return mixed
  */
 function hipchat_alerts_config_form($form, &$form_state) {
@@ -20,7 +21,7 @@ function hipchat_alerts_config_form($form, &$form_state) {
     '#markup' => '<div style="padding:10px;border:1px solid #BEBFB9;margin-bottom:10px;"><p>The HipChat Alerts module allows Drupal to publish certain alerts to a HipChat room using the v1 API. This module requires a <a href="http://hipchat.com/account/api">HipChat API Key</a>. </p></div>',
   );
 
-  // Fields are grouped as v1 to prepare for v2 API integration
+  // Fields are grouped as v1 to prepare for v2 API integration.
   $form['v1'] = array(
     '#type' => 'fieldset',
     '#states' => array(
@@ -37,8 +38,7 @@ function hipchat_alerts_config_form($form, &$form_state) {
   $form['v1']['hipchat_alerts_v1_api_token'] = array(
     '#type' => 'textfield',
     '#title' => t('API Token'),
-    '#description' =>
-      t('To generate a HipChat API v1 token, you will need to be a group administrator'),
+    '#description' => t('To generate a HipChat API v1 token, you will need to be a group administrator'),
     '#default_value' => variable_get('hipchat_alerts_v1_api_token', ''),
     '#size' => 60,
     '#maxlength' => 128,
@@ -51,8 +51,7 @@ function hipchat_alerts_config_form($form, &$form_state) {
     '#default_value' => variable_get('hipchat_alerts_room_id', ''),
     '#size' => 25,
     '#required' => TRUE,
-    '#description' =>
-      t('All notifications sent from this module will be posted in this room.'),
+    '#description' => t('All notifications sent from this module will be posted in this room.'),
   );
 
   $form['hipchat_alerts_watchdog_severity'] = array(
@@ -78,7 +77,7 @@ function hipchat_alerts_config_form($form, &$form_state) {
       WATCHDOG_DEBUG => t('@severity: Debug',
         array('@severity' => WATCHDOG_DEBUG)),
       NULL => t('OFF'),
-    )
+    ),
   );
 
   $form['hipchat_alerts_site_environment'] = array(
@@ -97,6 +96,7 @@ function hipchat_alerts_config_form($form, &$form_state) {
  * @param $apivers
  * @param $token
  * @param $room
+ *
  * @return string
  */
 function hipchat_alerts_config_info($apivers, $token, $room) {
@@ -127,6 +127,7 @@ function hipchat_alerts_config_info($apivers, $token, $room) {
  *
  * @param $form
  * @param $form_state
+ *
  * @return mixed
  */
 function hipchat_alerts_config_sandbox_form($form, &$form_state) {
@@ -149,7 +150,7 @@ function hipchat_alerts_config_sandbox_form($form, &$form_state) {
     '#value' => t('Send Test'),
     '#submit' => array('hipchat_alerts_config_sandbox_form_submit'),
     '#ajax' => array(
-      'callback' => 'hipchat_alerts_config_sandbox_form_callback', 
+      'callback' => 'hipchat_alerts_config_sandbox_form_callback',
       'wrapper' => 'test-result',
       'method' => 'replace',
       'effect' => 'fade',
@@ -160,10 +161,11 @@ function hipchat_alerts_config_sandbox_form($form, &$form_state) {
 }
 
 /**
- *
+ * Submit sandbox form.
  *
  * @param $form
  * @param $form_state
+ *
  * @return mixed
  */
 function hipchat_alerts_config_sandbox_form_submit($form, &$form_state) {
@@ -172,16 +174,28 @@ function hipchat_alerts_config_sandbox_form_submit($form, &$form_state) {
   return $form;
 }
 
+/**
+ * Formats results.
+ *
+ * @param $form
+ * @param $form_state
+ *
+ * @return mixed
+ */
 function hipchat_alerts_config_sandbox_form_callback($form, &$form_state) {
   return $form['test_result']['#markup'];
 }
 
+/**
+ * Check if test message was successful.
+ *
+ * @param $message
+ */
 function _hipchat_alerts_config_sandbox_test($message) {
   $success = hipchat_alerts_message($message, $sender = 'HC-Alerts Test');
 
   $message = ($success) ? 'Success' : 'Message was unable to send';
   $status = ($success) ? 'status' : 'error';
 
-  watchdog('hipchat-alerts', $message, array(), WATCHDOG_ERROR);
   drupal_set_message(t('@message', array('@message' => $message)), $status);
 }
