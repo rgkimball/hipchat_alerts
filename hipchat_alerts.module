@@ -130,12 +130,10 @@ function hipchat_alerts_watchdog($log_entry) {
 }
 
 /**
- * Implements version callback for hook_libraries_info().
- *
- * Since hipchat-php doesn't have a version number specified in any files we
- * have to hijack the callback and just provide TRUE.
+ * Implements hook_libraries_info() version callback.
  *
  * @return bool
+ *   Since hipchat-php has no version number specified anywhere, return TRUE
  */
 function hipchat_alerts_version_callback() {
   return TRUE;
@@ -144,10 +142,11 @@ function hipchat_alerts_version_callback() {
 /**
  * Messaging handler.
  *
- * @param string $sender
- * @param string $message
+ * @param string $message Contents of HipChat message.
+ * @param string $sender Appears as the message sender in HipChat.
  *
  * @return bool
+ *   Return TRUE if message was sent successfully.
  */
 function hipchat_alerts_message($message, $sender = 'Drupal') {
   $room = variable_get('hipchat_alerts_room_id', '');
@@ -193,13 +192,12 @@ function hipchat_alerts_message($message, $sender = 'Drupal') {
 }
 
 /**
- * Build user table
- *
- * @param $room
+ * Build user table.
  *
  * @return mixed
+ *   Returns a formatted table of each user in the HipChat group.
  */
-function hipchat_alerts_users_table($room) {
+function hipchat_alerts_users_table() {
 
   if (($library = libraries_load('hipchat-php')) && $library['loaded']) {
     $token = variable_get('hipchat_alerts_v1_api_token');

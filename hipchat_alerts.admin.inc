@@ -92,8 +92,8 @@ function hipchat_alerts_config_form($form, &$form_state) {
 /**
  * Builds admin group info page.
  *
- * @param $api
- * @param $token
+ * @param int $token HipChat API token.
+ * @param int $api A keyed indicator for the HipChat API version.
  *
  * @return string
  */
@@ -111,13 +111,12 @@ function hipchat_alerts_config_info($token, $api) {
   if (isset($api) && strlen($token) > 0) {
 
     $content .= '<h2>Group Users</h2>';
-    $content .= hipchat_alerts_users_table(variable_get('hipchat_alerts_room_id', ''));
+    $content .= hipchat_alerts_users_table();
 
   }
   elseif (strlen($token) <= 0) {
     drupal_set_message(t('HipChat Alerts has not yet been configured. Please provide your API Key.'), 'error');
   }
-
 
   return $content;
 }
@@ -162,12 +161,7 @@ function hipchat_alerts_config_sandbox_form($form, &$form_state) {
 }
 
 /**
- * Submit sandbox form.
- *
- * @param $form
- * @param $form_state
- *
- * @return mixed
+ * Implements submit callback for hook_form().
  */
 function hipchat_alerts_config_sandbox_form_submit($form, &$form_state) {
   $message = $form_state['values']['send_content'];
@@ -176,12 +170,7 @@ function hipchat_alerts_config_sandbox_form_submit($form, &$form_state) {
 }
 
 /**
- * Formats results.
- *
- * @param $form
- * @param $form_state
- *
- * @return mixed
+ * Implements result formatter for hook_form().
  */
 function hipchat_alerts_config_sandbox_form_callback($form, &$form_state) {
   return $form['test_result']['#markup'];
@@ -190,7 +179,7 @@ function hipchat_alerts_config_sandbox_form_callback($form, &$form_state) {
 /**
  * Check if test message was successful.
  *
- * @param $message
+ * @param string $message Sandbox message contents.
  */
 function _hipchat_alerts_config_sandbox_test($message) {
   $success = hipchat_alerts_message($message, 'HC-Alerts Test');
