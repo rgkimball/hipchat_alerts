@@ -13,6 +13,7 @@ define('HIPCHAT_ALERTS_API_ENDPOINT', 'https://api.hipchat.com');
 
 /**
  * Implements hook_menu().
+ *
  * Defines menu items for admin interface.
  *
  * @return mixed
@@ -61,6 +62,7 @@ function hipchat_alerts_menu() {
 
 /**
  * Implements hook_permission().
+ *
  * Module admin access
  *
  * @return mixed
@@ -96,6 +98,7 @@ function hipchat_alerts_libraries_info() {
 
 /**
  * Implements hook_watchdog().
+ *
  * Evaluates every watchdog log message and routes a message if necessary.
  *
  * @param array $log_entry
@@ -128,6 +131,7 @@ function hipchat_alerts_watchdog($log_entry) {
 
 /**
  * Implements version callback for hook_libraries_info().
+ *
  * Since hipchat-php doesn't have a version number specified in any files we
  * have to hijack the callback and just provide TRUE.
  *
@@ -191,6 +195,7 @@ function hipchat_alerts_message($message, $sender = 'Drupal') {
 
 /**
  * Build user table
+ *
  * @param $room
  * @return mixed
  */

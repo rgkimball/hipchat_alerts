@@ -1,16 +1,17 @@
 <?php
 /**
  * @file
- * Installation
+ * Installation.
  * @author rgkimball
  * @package hipchat_alerts
  * @version 1.0.0
  */
 
-
 /**
  * Implements hook_install().
+ *
  * Make sure we're calling hook_libraries_info for hipchat-php.
+ *
  */
 function hipchat_alerts_install() {
   cache_clear_all();
@@ -33,6 +34,7 @@ function hipchat_alerts_uninstall() {
 
 /**
  * Implements hook_requirements().
+ *
  * Checks if library is present.
  *
  * @param $phase

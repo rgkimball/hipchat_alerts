@@ -5,4 +5,3 @@ package = Development
 configure = admin/config/development/hipchat-alerts
 
 dependencies[] = libraries
-files[] = hipchat_alerts.module

@@ -9,6 +9,7 @@
 
 /**
  * Implements hook_form()
+ *
  * @param $form
  * @param $form_state
  * @return mixed
@@ -90,6 +91,14 @@ function hipchat_alerts_config_form($form, &$form_state) {
   return system_settings_form($form);
 }
 
+/**
+ * Builds admin group info page.
+ *
+ * @param $apivers
+ * @param $token
+ * @param $room
+ * @return string
+ */
 function hipchat_alerts_config_info($apivers, $token, $room) {
 
   if (variable_get('hipchat_alerts_site_environment') == 1) {
@@ -113,6 +122,13 @@ function hipchat_alerts_config_info($apivers, $token, $room) {
   return system_settings_form($form);
 }
 
+/**
+ * Builds admin sandbox page.
+ *
+ * @param $form
+ * @param $form_state
+ * @return mixed
+ */
 function hipchat_alerts_config_sandbox_form($form, &$form_state) {
 
   $form['header'] = array(
@@ -143,6 +159,13 @@ function hipchat_alerts_config_sandbox_form($form, &$form_state) {
   return $form;
 }
 
+/**
+ *
+ *
+ * @param $form
+ * @param $form_state
+ * @return mixed
+ */
 function hipchat_alerts_config_sandbox_form_submit($form, &$form_state) {
   $message = $form_state['values']['send_content'];
   _hipchat_alerts_config_sandbox_test($message);
