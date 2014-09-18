@@ -92,10 +92,13 @@ function hipchat_alerts_config_form($form, &$form_state) {
 /**
  * Builds admin group info page.
  *
- * @param int $token HipChat API token.
- * @param int $api A keyed indicator for the HipChat API version.
+ * @param int $token
+ *   HipChat API token.
+ * @param int $api
+ *   A keyed indicator for the HipChat API version.
  *
- * @return string
+ * @return mixed
+ *   Returns a formatted table of HipChat group users.
  */
 function hipchat_alerts_config_info($token, $api) {
 
@@ -179,7 +182,8 @@ function hipchat_alerts_config_sandbox_form_callback($form, &$form_state) {
 /**
  * Check if test message was successful.
  *
- * @param string $message Sandbox message contents.
+ * @param string $message
+ *   Sandbox message contents.
  */
 function _hipchat_alerts_config_sandbox_test($message) {
   $success = hipchat_alerts_message($message, 'HC-Alerts Test');

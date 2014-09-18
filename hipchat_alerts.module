@@ -130,7 +130,7 @@ function hipchat_alerts_watchdog($log_entry) {
 }
 
 /**
- * Implements hook_libraries_info() version callback.
+ * Implements version callback for hook_libraries_info().
  *
  * @return bool
  *   Since hipchat-php has no version number specified anywhere, return TRUE
@@ -142,8 +142,10 @@ function hipchat_alerts_version_callback() {
 /**
  * Messaging handler.
  *
- * @param string $message Contents of HipChat message.
- * @param string $sender Appears as the message sender in HipChat.
+ * @param string $message
+ *   Contents of HipChat message.
+ * @param string $sender
+ *   Appears as the message sender in HipChat.
  *
  * @return bool
  *   Return TRUE if message was sent successfully.
