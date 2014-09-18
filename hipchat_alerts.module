@@ -130,7 +130,9 @@ function hipchat_alerts_watchdog($log_entry) {
 }
 
 /**
- * Implements version callback for hook_libraries_info().
+ * Helper function to validate libraries_info version call.
+ *
+ * @see hook_libraries_info()
  *
  * @return bool
  *   Since hipchat-php has no version number specified anywhere, return TRUE
