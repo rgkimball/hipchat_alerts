@@ -95,26 +95,32 @@ function hipchat_alerts_libraries_info() {
  * Implements hook_watchdog().
  *
  * Evaluates every watchdog log message and routes a message if necessary.
- *
- * @param array $log_entry
  */
 function hipchat_alerts_watchdog($log_entry) {
   $minimum = variable_get('hipchat_alerts_watchdog_severity', WATCHDOG_ERROR);
 
   if ($minimum != NULL && $log_entry['severity'] <= $minimum) {
     // Can't pass null as second variable of t().
-    (isset($log_entry['variables'])) ? $vars = $log_entry['variables'] : $vars = array();
+    $vars = (isset($log_entry['variables'])) ? $log_entry['variables'] : array();
 
     // Convert severity to human speak.
-    $severity = array('emergency', 'alert', 'critical', 'error', 'warning',
-      'notice', 'info', 'debug');
+    $severity = array(
+      'emergency',
+      'alert',
+      'critical',
+      'error',
+      'warning',
+      'notice',
+      'info',
+      'debug',
+    );
 
     $vars = $vars +
       array(
         '@type'     => $log_entry['type'],
         '@severity' => $severity[$log_entry['severity']],
         '@message'  => $log_entry['message'],
-        '@url'      => $GLOBALS['base_url']
+        '@url'      => $GLOBALS['base_url'],
       );
 
     hipchat_alerts_message(t('[@url] @type (@severity): @message', $vars),
@@ -138,8 +144,8 @@ function hipchat_alerts_version_callback() {
 /**
  * Messaging handler.
  *
- * @param $sender
- * @param $message
+ * @param string $sender
+ * @param string $message
  *
  * @return bool
  */

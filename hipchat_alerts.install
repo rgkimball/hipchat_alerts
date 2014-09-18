@@ -48,11 +48,13 @@ function hipchat_alerts_requirements($phase) {
       );
     }
     else {
+      $lib_path = 'HipChat PHP v1 library installed at <i>';
+      $lib_path .= libraries_get_path('hipchat-php') . '/' . $library['path'];
+      $lib_path .= '/HipChat.php</i>';
+
       $requirements['hipchat-php'] = array(
         'title' => 'HipChat Alerts',
-        'value' => 'HipChat PHP v1 library installed at <i>' .
-          libraries_get_path('hipchat-php') . '/' . $library['path'] .
-          '/HipChat.php</i>',
+        'value' => $lib_path,
         'severity' => REQUIREMENT_OK,
       );
     }
