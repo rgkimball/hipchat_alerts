@@ -154,7 +154,7 @@ function hipchat_alerts_config_sandbox_form_callback($form, &$form_state) {
 }
 
 function _hipchat_alerts_config_sandbox_test($message) {
-  $success = hipchat_alerts_message($message);
+  $success = hipchat_alerts_message($message, $sender = 'HC-Alerts Test');
 
   $message = ($success) ? 'Success' : 'Message was unable to send';
   $status = ($success) ? 'status' : 'error';

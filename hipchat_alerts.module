@@ -120,7 +120,7 @@ function hipchat_alerts_watchdog($log_entry) {
         '@url'      => $GLOBALS['base_url']
       );
 
-    hipchat_alerts_message(t('@type (@severity): @message [@url]', $vars),
+    hipchat_alerts_message(t('[@url] @type (@severity): @message', $vars),
       variable_get('site_name', 'Drupal'));
   }
 
@@ -172,9 +172,12 @@ function hipchat_alerts_message($message, $sender = 'Drupal') {
       catch (Exception $e) {
         drupal_set_message(t('Error sending HipChat message: @message'),
           array('@message' => $e->getMessage()));
-        watchdog('hipchat_alerts', $message, WATCHDOG_ERROR);
         $success = FALSE;
       }
+    }
+    else {
+      drupal_set_message(
+        t('Error sending HipChat message: Development environment enabled'));
     }
   }
   else {

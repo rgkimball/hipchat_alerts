@@ -9,16 +9,15 @@
 
 
 /**
- * Implements hook_install()
- * Make sure we're calling hook_libraries_info for hipchat-php
- * @return mixed
+ * Implements hook_install().
+ * Make sure we're calling hook_libraries_info for hipchat-php.
  */
 function hipchat_alerts_install() {
   cache_clear_all();
 }
 
 /**
- * Implements hook_uninstall()
+ * Implements hook_uninstall().
  */
 function hipchat_alerts_uninstall() {
   variable_del('hipchat_alerts_api_version');
@@ -33,8 +32,11 @@ function hipchat_alerts_uninstall() {
 
 
 /**
- * Implements hook_requirements()
- * Checks API version
+ * Implements hook_requirements().
+ * Checks if library is present.
+ *
+ * @param $phase
+ * @return mixed
  */
 function hipchat_alerts_requirements($phase) {
   $requirements = array();
